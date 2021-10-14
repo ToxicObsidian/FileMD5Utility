@@ -2,7 +2,8 @@
 A Toxic_Obsidian's CFMD5HF Utility
 
 Useage:
-```bash
+For CUIs:
+```
 $ CreateFileMD5HashFile.py -p [target] [options]...
 e.g.:
     $ CreateFileMD5HashFile.py -p test.txt -m
@@ -14,4 +15,6 @@ Parameters:
     -nc or --NOT-CREATE     do not create the md5 file
     -rf or --RESULT-FILE    specify a result file
 ```
+For GUIs:
+Just double click the .py file or executable file, and follow the instruction.
 Instructions are written in Simplified Chinese only.
