@@ -14,3 +14,4 @@ Parameters:
     -nc or --NOT-CREATE     do not create the md5 file
     -rf or --RESULT-FILE    specify a result file
 ```
+Instructions are written in Simplified Chinese only.
