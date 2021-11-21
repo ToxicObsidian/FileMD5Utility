@@ -11,9 +11,41 @@ from progressbar import ProgressBar, Percentage, Bar, ETA, Timer
 import codecs
 import re
 
+__VERSION__ = '0.2.1 alpha'
+
 muteflag = False
 createflag = True
 
+def _removeComment(textline):
+    t = textline
+    for i in range(len(textline)):
+        if textline[i] == '#':
+            if i > 0 and textline[i - 1] == '\\':
+                continue
+            else:
+                t = textline[:i]
+                break
+    return t
+
+def _validFileName(fname):
+    p = ''
+    for c in fname:
+        if c == '#':
+            p += '\\'
+        p += c
+    return p
+
+def _getFileName(vfname):
+    p = ''
+    i = 0
+    while i < len(vfname):
+        if vfname[i] == '\\' and vfname[i + 1] == '#':
+            p += '#'
+            i += 1
+        else:
+            p += vfname[i]
+        i += 1
+    return p
 
 # all paths in filelist must be abspaths
 def _commonDir(filelist):
@@ -92,7 +124,7 @@ def WriteMD5File(md5filename, md5vallist, absdatapath = ''):
         file = csfile
         if not os.path.isabs(file):
             file = os.path.abspath(file)
-        md5file.write('{} *{}\n'.format(csresult, file[len(absdatapath):]))
+        md5file.write('{} *{}\n'.format(csresult, _validFileName(file[len(absdatapath):])))
     md5file.close()
 
 
@@ -115,16 +147,14 @@ def VerifyMD5File(md5filename, rootpath):
 
         nCnt += 1
         res = res[0]
-        hashtagPos = res.find('#')
-        if not hashtagPos == -1:
-            res = res[:hashtagPos]
+        res = _removeComment(res)
         res = res.strip()               # 去除头尾的多余空格
         splitPos = res.find(' *')
         md5refval = res[:splitPos]      # 更加鲁棒
-        csfilename = os.path.normpath(rootpath + '/' + res[splitPos + 2:])
+        csfilename = os.path.normpath(rootpath + '/' + _getFileName(res[splitPos + 2:]))
 
         if not muteflag:
-            print('\nChecking file: {}'.format(res[splitPos + 2:]))
+            print('\nChecking file: {}'.format(_getFileName(res[splitPos + 2:])))
         if os.path.exists(csfilename):
             md5val = GetFileMD5(csfilename)
             if md5val == md5refval:
@@ -338,6 +368,7 @@ if __name__ == '__main__':
             while True:
                 os.system('cls')
                 print('A Toxic_Obsidian\'s CreateFileMD5HashFile(CFMD5HF) Utility')
+                print('Build:\tv' + __VERSION__)
                 print('1. 计算文件MD5校核值')
                 print('2. 根据.md5文件验证文件完整性')
                 print('0. 结束程序')
@@ -353,6 +384,12 @@ if __name__ == '__main__':
                     print('未知命令')
                     os.system('pause')
             os.system('pause')
+        elif len(argv) == 2:
+            if os.path.isabs(argv[1]):
+                argv.append('-p')
+                argv.append(argv[1])
+                argv.append('-nc')
+                doCheckSum(False)
         else:
             if not '-p' in argv and not '--PATH' in argv:
                 print('{}: You must specify at least one path to check!'.format(__file__))
