@@ -11,7 +11,7 @@ from progressbar import ProgressBar, Percentage, Bar, ETA, Timer
 import codecs
 import re
 
-__VERSION__ = '0.2.1 alpha'
+__VERSION__ = '0.2.2 alpha'
 
 muteflag = False
 createflag = True
@@ -306,7 +306,8 @@ def doVerify(isPrompt):
         if os.path.isfile(rootpath):
             filelist = [rootpath,]
             md5filename = rootpath + '.md5'
-            ch = input('请输入MD5信息文件路径（默认为{}.md5）:'.format(md5filename))
+            rootpath = os.path.dirname(rootpath)
+            ch = input('请输入MD5信息文件路径（默认为{}）:'.format(md5filename))
             if ch != '':
                 md5filename = ch
             if not os.path.exists(md5filename) or not os.path.isfile(md5filename):
